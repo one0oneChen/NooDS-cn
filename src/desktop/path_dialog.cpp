@@ -18,6 +18,7 @@
 */
 
 #include "path_dialog.h"
+#include "../i18n/i18n.h"
 #include "../settings.h"
 
 enum PathEvent {
@@ -42,7 +43,7 @@ EVT_BUTTON(OPEN_FOLDER, PathDialog::openFolder)
 EVT_BUTTON(wxID_OK, PathDialog::confirm)
 wxEND_EVENT_TABLE()
 
-PathDialog::PathDialog(): wxDialog(nullptr, wxID_ANY, "Path Settings") {
+PathDialog::PathDialog(): wxDialog(nullptr, wxID_ANY, TR_I18N("PATH_TITLE")) {
     // Use the height of a button as a unit to scale pixel values based on DPI/font
     wxButton *dummy = new wxButton(this, wxID_ANY, "");
     int size = dummy->GetSize().y;
@@ -50,45 +51,45 @@ PathDialog::PathDialog(): wxDialog(nullptr, wxID_ANY, "Path Settings") {
 
     // Set up the ARM9 BIOS path setting
     wxBoxSizer *arm9Sizer = new wxBoxSizer(wxHORIZONTAL);
-    arm9Sizer->Add(new wxStaticText(this, wxID_ANY, "ARM9 BIOS:"), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
+    arm9Sizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("PATH_ARM9_BIOS")), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
     bios9Path = new wxTextCtrl(this, wxID_ANY, Settings::bios9Path, wxDefaultPosition, wxSize(size * 8, size));
     arm9Sizer->Add(bios9Path);
-    arm9Sizer->Add(new wxButton(this, BIOS9_BROWSE, "Browse"), 0, wxLEFT, size / 8);
+    arm9Sizer->Add(new wxButton(this, BIOS9_BROWSE, TR_I18N("PATH_BROWSE")), 0, wxLEFT, size / 8);
 
     // Set up the ARM7 BIOS path setting
     wxBoxSizer *arm7Sizer = new wxBoxSizer(wxHORIZONTAL);
-    arm7Sizer->Add(new wxStaticText(this, wxID_ANY, "ARM7 BIOS:"), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
+    arm7Sizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("PATH_ARM7_BIOS")), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
     bios7Path = new wxTextCtrl(this, wxID_ANY, Settings::bios7Path, wxDefaultPosition, wxSize(size * 8, size));
     arm7Sizer->Add(bios7Path);
-    arm7Sizer->Add(new wxButton(this, BIOS7_BROWSE, "Browse"), 0, wxLEFT, size / 8);
+    arm7Sizer->Add(new wxButton(this, BIOS7_BROWSE, TR_I18N("PATH_BROWSE")), 0, wxLEFT, size / 8);
 
     // Set up the firmware path setting
     wxBoxSizer *firmSizer = new wxBoxSizer(wxHORIZONTAL);
-    firmSizer->Add(new wxStaticText(this, wxID_ANY, "Firmware:"), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
+    firmSizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("PATH_FIRMWARE")), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
     firmwarePath = new wxTextCtrl(this, wxID_ANY, Settings::firmwarePath, wxDefaultPosition, wxSize(size * 8, size));
     firmSizer->Add(firmwarePath);
-    firmSizer->Add(new wxButton(this, FIRMWARE_BROWSE, "Browse"), 0, wxLEFT, size / 8);
+    firmSizer->Add(new wxButton(this, FIRMWARE_BROWSE, TR_I18N("PATH_BROWSE")), 0, wxLEFT, size / 8);
 
     // Set up the GBA BIOS path setting
     wxBoxSizer *gbaSizer = new wxBoxSizer(wxHORIZONTAL);
-    gbaSizer->Add(new wxStaticText(this, wxID_ANY, "GBA BIOS:"), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
+    gbaSizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("PATH_GBA_BIOS")), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
     gbaBiosPath = new wxTextCtrl(this, wxID_ANY, Settings::gbaBiosPath, wxDefaultPosition, wxSize(size * 8, size));
     gbaSizer->Add(gbaBiosPath);
-    gbaSizer->Add(new wxButton(this, GBA_BIOS_BROWSE, "Browse"), 0, wxLEFT, size / 8);
+    gbaSizer->Add(new wxButton(this, GBA_BIOS_BROWSE, TR_I18N("PATH_BROWSE")), 0, wxLEFT, size / 8);
 
     // Set up the SD image path setting
     wxBoxSizer *sdSizer = new wxBoxSizer(wxHORIZONTAL);
-    sdSizer->Add(new wxStaticText(this, wxID_ANY, "SD Image:"), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
+    sdSizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("PATH_SD_IMAGE")), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
     sdImagePath = new wxTextCtrl(this, wxID_ANY, Settings::sdImagePath, wxDefaultPosition, wxSize(size * 8, size));
     sdSizer->Add(sdImagePath);
-    sdSizer->Add(new wxButton(this, SD_IMAGE_BROWSE, "Browse"), 0, wxLEFT, size / 8);
+    sdSizer->Add(new wxButton(this, SD_IMAGE_BROWSE, TR_I18N("PATH_BROWSE")), 0, wxLEFT, size / 8);
 
     // Set up the separate folder checkboxes
     wxBoxSizer *folderSizer = new wxBoxSizer(wxHORIZONTAL);
-    folderSizer->Add(new wxStaticText(this, wxID_ANY, "Separate Folders For:"), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
-    folderSizer->Add(boxes[0] = new wxCheckBox(this, SAVES_FOLDER, "Saves"), 0, wxALIGN_CENTRE | wxLEFT, size / 8);
-    folderSizer->Add(boxes[1] = new wxCheckBox(this, STATES_FOLDER, "States"), 0, wxALIGN_CENTRE | wxLEFT, size / 8);
-    folderSizer->Add(boxes[2] = new wxCheckBox(this, CHEATS_FOLDER, "Cheats"), 0, wxALIGN_CENTRE | wxLEFT, size / 8);
+    folderSizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("PATH_SEPARATE_FOLDERS")), 1, wxALIGN_CENTRE | wxRIGHT, size / 8);
+    folderSizer->Add(boxes[0] = new wxCheckBox(this, SAVES_FOLDER, TR_I18N("PATH_SAVES")), 0, wxALIGN_CENTRE | wxLEFT, size / 8);
+    folderSizer->Add(boxes[1] = new wxCheckBox(this, STATES_FOLDER, TR_I18N("PATH_STATES")), 0, wxALIGN_CENTRE | wxLEFT, size / 8);
+    folderSizer->Add(boxes[2] = new wxCheckBox(this, CHEATS_FOLDER, TR_I18N("PATH_CHEATS")), 0, wxALIGN_CENTRE | wxLEFT, size / 8);
 
     // Set the current values of the checkboxes
     boxes[0]->SetValue(Settings::savesFolder);
@@ -97,10 +98,10 @@ PathDialog::PathDialog(): wxDialog(nullptr, wxID_ANY, "Path Settings") {
 
     // Set up the open folder, cancel, and confirm buttons
     wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-    buttonSizer->Add(new wxButton(this, OPEN_FOLDER, "Open Folder"));
+    buttonSizer->Add(new wxButton(this, OPEN_FOLDER, TR_I18N("PATH_OPEN_FOLDER")));
     buttonSizer->Add(new wxStaticText(this, wxID_ANY, ""), 1);
-    buttonSizer->Add(new wxButton(this, wxID_CANCEL, "Cancel"), 0, wxRIGHT, size / 16);
-    buttonSizer->Add(new wxButton(this, wxID_OK, "Confirm"), 0, wxLEFT, size / 16);
+    buttonSizer->Add(new wxButton(this, wxID_CANCEL, TR_I18N("PATH_CANCEL")), 0, wxRIGHT, size / 16);
+    buttonSizer->Add(new wxButton(this, wxID_OK, TR_I18N("PATH_CONFIRM")), 0, wxLEFT, size / 16);
 
     // Combine all of the contents
     wxBoxSizer *contents = new wxBoxSizer(wxVERTICAL);
@@ -125,8 +126,8 @@ PathDialog::PathDialog(): wxDialog(nullptr, wxID_ANY, "Path Settings") {
 
 void PathDialog::bios9Browse(wxCommandEvent &event) {
     // Show the file browser
-    wxFileDialog bios9Select(this, "Select ARM9 BIOS File", "", "",
-        "Binary files (*.bin)|*.bin", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    wxFileDialog bios9Select(this, TR_I18N("PATH_SELECT_ARM9_BIOS"), "", "",
+        TR_I18N("FILTER_BIN"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if (bios9Select.ShowModal() == wxID_CANCEL) return;
 
     // Update the path
@@ -136,8 +137,8 @@ void PathDialog::bios9Browse(wxCommandEvent &event) {
 
 void PathDialog::bios7Browse(wxCommandEvent &event) {
     // Show the file browser
-    wxFileDialog bios7Select(this, "Select ARM7 BIOS File", "", "",
-        "Binary files (*.bin)|*.bin", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    wxFileDialog bios7Select(this, TR_I18N("PATH_SELECT_ARM7_BIOS"), "", "",
+        TR_I18N("FILTER_BIN"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if (bios7Select.ShowModal() == wxID_CANCEL) return;
 
     // Update the path
@@ -147,8 +148,8 @@ void PathDialog::bios7Browse(wxCommandEvent &event) {
 
 void PathDialog::firmwareBrowse(wxCommandEvent &event) {
     // Show the file browser
-    wxFileDialog firmwareSelect(this, "Select Firmware File", "", "",
-        "Binary files (*.bin)|*.bin", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    wxFileDialog firmwareSelect(this, TR_I18N("PATH_SELECT_FIRMWARE"), "", "",
+        TR_I18N("FILTER_BIN"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if (firmwareSelect.ShowModal() == wxID_CANCEL) return;
 
     // Update the path
@@ -158,8 +159,8 @@ void PathDialog::firmwareBrowse(wxCommandEvent &event) {
 
 void PathDialog::gbaBiosBrowse(wxCommandEvent &event) {
     // Show the file browser
-    wxFileDialog gbaBiosSelect(this, "Select GBA BIOS File", "", "",
-        "Binary files (*.bin)|*.bin", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    wxFileDialog gbaBiosSelect(this, TR_I18N("PATH_SELECT_GBA_BIOS"), "", "",
+        TR_I18N("FILTER_BIN"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if (gbaBiosSelect.ShowModal() == wxID_CANCEL) return;
 
     // Update the path
@@ -169,8 +170,8 @@ void PathDialog::gbaBiosBrowse(wxCommandEvent &event) {
 
 void PathDialog::sdImageBrowse(wxCommandEvent &event) {
     // Show the file browser
-    wxFileDialog sdImageSelect(this, "Select SD Image File", "", "",
-        "Image files (*.img)|*.img", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    wxFileDialog sdImageSelect(this, TR_I18N("PATH_SELECT_SD_IMAGE"), "", "",
+        TR_I18N("FILTER_IMG"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if (sdImageSelect.ShowModal() == wxID_CANCEL) return;
 
     // Update the path

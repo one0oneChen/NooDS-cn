@@ -1,6 +1,6 @@
 NAME := noods
 BUILD := build
-SRCS := src src/common src/desktop
+SRCS := src src/common src/desktop src/i18n
 ARGS := -Ofast -flto -std=c++11 -DUSE_GL_CANVAS -DLOG_LEVEL=0
 LIBS := $(shell pkg-config --libs portaudio-2.0)
 INCS := $(shell pkg-config --cflags portaudio-2.0)

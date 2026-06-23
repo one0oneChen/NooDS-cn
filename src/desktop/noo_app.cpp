@@ -23,6 +23,7 @@
 #include "noo_app.h"
 #include "noo_frame.h"
 #include "../common/screen_layout.h"
+#include "../i18n/i18n.h"
 #include "../settings.h"
 
 enum AppEvent {
@@ -84,6 +85,9 @@ bool NooApp::OnInit() {
 #endif
         Settings::load(settingsDir);
     }
+
+    // Apply the saved language preference before any GUI strings are created
+    I18n::instance().setLanguageFromInt(Settings::language);
 
     // Create the initial frame, passing along a command line filename if given
     SetAppName("NooDS");

@@ -16,6 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with NooDS. If not, see <https://www.gnu.org/licenses/>.
 */
+#include <wx/stdpaths.h>
 
 #include "noo_frame.h"
 #include "cheat_dialog.h"
@@ -25,6 +26,7 @@
 #include "noo_canvas.h"
 #include "path_dialog.h"
 #include "save_dialog.h"
+#include "../i18n/i18n.h"
 #include "../settings.h"
 #include "../../icon/icon.xpm"
 
@@ -66,6 +68,8 @@ enum FrameEvent {
     PATH_SETTINGS,
     SCREEN_LAYOUT,
     INPUT_BINDINGS,
+    LANGUAGE_ENGLISH,
+    LANGUAGE_CHINESE,
     UPDATE_JOY
 };
 
@@ -107,6 +111,8 @@ EVT_MENU(DSI_MODE, NooFrame::dsiMode)
 EVT_MENU(PATH_SETTINGS, NooFrame::pathSettings)
 EVT_MENU(SCREEN_LAYOUT, NooFrame::layoutSettings)
 EVT_MENU(INPUT_BINDINGS, NooFrame::inputSettings)
+EVT_MENU(LANGUAGE_ENGLISH, NooFrame::languageEnglish)
+EVT_MENU(LANGUAGE_CHINESE, NooFrame::languageChinese)
 EVT_TIMER(UPDATE_JOY, NooFrame::updateJoystick)
 EVT_DROP_FILES(NooFrame::dropFiles)
 EVT_CLOSE(NooFrame::close)
@@ -121,25 +127,25 @@ NooFrame::NooFrame(NooApp *app, int id, std::string path, NooFrame *partner):
     if (mainFrame) {
         // Set up the file menu
         fileMenu = new wxMenu();
-        fileMenu->Append(LOAD_ROM, "&Load ROM");
-        fileMenu->Append(BOOT_FIRMWARE, "&Boot Firmware");
+        fileMenu->Append(LOAD_ROM, TR_I18N("FILE_LOAD_ROM"));
+        fileMenu->Append(BOOT_FIRMWARE, TR_I18N("FILE_BOOT_FIRMWARE"));
         fileMenu->AppendSeparator();
-        fileMenu->Append(SAVE_STATE, "&Save State");
-        fileMenu->Append(LOAD_STATE, "&Load State");
+        fileMenu->Append(SAVE_STATE, TR_I18N("FILE_SAVE_STATE"));
+        fileMenu->Append(LOAD_STATE, TR_I18N("FILE_LOAD_STATE"));
         fileMenu->AppendSeparator();
-        fileMenu->Append(TRIM_ROM, "&Trim ROM");
-        fileMenu->Append(CHANGE_SAVE, "&Change Save Type");
+        fileMenu->Append(TRIM_ROM, TR_I18N("FILE_TRIM_ROM"));
+        fileMenu->Append(CHANGE_SAVE, TR_I18N("FILE_CHANGE_SAVE"));
         fileMenu->AppendSeparator();
-        fileMenu->Append(QUIT, "&Quit");
+        fileMenu->Append(QUIT, TR_I18N("FILE_QUIT"));
 
         // Set up the system menu
         systemMenu = new wxMenu();
-        systemMenu->Append(PAUSE, "&Resume");
-        systemMenu->Append(RESTART, "&Restart");
-        systemMenu->Append(STOP, "&Stop");
+        systemMenu->Append(PAUSE, TR_I18N("SYSTEM_RESUME"));
+        systemMenu->Append(RESTART, TR_I18N("SYSTEM_RESTART"));
+        systemMenu->Append(STOP, TR_I18N("SYSTEM_STOP"));
         systemMenu->AppendSeparator();
-        systemMenu->Append(ACTION_REPLAY, "&Action Replay");
-        systemMenu->Append(ADD_SYSTEM, "&Add System");
+        systemMenu->Append(ACTION_REPLAY, TR_I18N("SYSTEM_ACTION_REPLAY"));
+        systemMenu->Append(ADD_SYSTEM, TR_I18N("SYSTEM_ADD_SYSTEM"));
 
         // Disable some menu items until the core is running
         fileMenu->Enable(TRIM_ROM, false);
@@ -153,56 +159,67 @@ NooFrame::NooFrame(NooApp *app, int id, std::string path, NooFrame *partner):
 
         // Set up the skip frames submenu
         wxMenu *frameskip = new wxMenu();
-        frameskip->AppendRadioItem(FRAMESKIP_0, "&None");
-        frameskip->AppendRadioItem(FRAMESKIP_1, "&1 Frame");
-        frameskip->AppendRadioItem(FRAMESKIP_2, "&2 Frames");
-        frameskip->AppendRadioItem(FRAMESKIP_3, "&3 Frames");
-        frameskip->AppendRadioItem(FRAMESKIP_4, "&4 Frames");
-        frameskip->AppendRadioItem(FRAMESKIP_5, "&5 Frames");
+        frameskip->AppendRadioItem(FRAMESKIP_0, TR_I18N("FRAMESKIP_NONE"));
+        frameskip->AppendRadioItem(FRAMESKIP_1, TR_I18N("FRAMESKIP_1"));
+        frameskip->AppendRadioItem(FRAMESKIP_2, TR_I18N("FRAMESKIP_2"));
+        frameskip->AppendRadioItem(FRAMESKIP_3, TR_I18N("FRAMESKIP_3"));
+        frameskip->AppendRadioItem(FRAMESKIP_4, TR_I18N("FRAMESKIP_4"));
+        frameskip->AppendRadioItem(FRAMESKIP_5, TR_I18N("FRAMESKIP_5"));
 
         // Set up the threaded 3D submenu
         wxMenu *threaded3D = new wxMenu();
-        threaded3D->AppendRadioItem(THREADED_3D_0, "&Disabled");
-        threaded3D->AppendRadioItem(THREADED_3D_1, "&1 Thread");
-        threaded3D->AppendRadioItem(THREADED_3D_2, "&2 Threads");
-        threaded3D->AppendRadioItem(THREADED_3D_3, "&3 Threads");
-        threaded3D->AppendRadioItem(THREADED_3D_4, "&4 Threads");
+        threaded3D->AppendRadioItem(THREADED_3D_0, TR_I18N("THREADED_3D_DISABLED"));
+        threaded3D->AppendRadioItem(THREADED_3D_1, TR_I18N("THREADED_3D_1"));
+        threaded3D->AppendRadioItem(THREADED_3D_2, TR_I18N("THREADED_3D_2"));
+        threaded3D->AppendRadioItem(THREADED_3D_3, TR_I18N("THREADED_3D_3"));
+        threaded3D->AppendRadioItem(THREADED_3D_4, TR_I18N("THREADED_3D_4"));
 
         // Set up the general settings submenu
         wxMenu *generalMenu = new wxMenu();
-        generalMenu->AppendCheckItem(DIRECT_BOOT, "&Direct Boot");
-        generalMenu->AppendCheckItem(ROM_IN_RAM, "&Keep ROM in RAM");
-        generalMenu->AppendCheckItem(FPS_LIMITER, "&FPS Limiter");
+        generalMenu->AppendCheckItem(DIRECT_BOOT, TR_I18N("GEN_DIRECT_BOOT"));
+        generalMenu->AppendCheckItem(ROM_IN_RAM, TR_I18N("GEN_ROM_IN_RAM"));
+        generalMenu->AppendCheckItem(FPS_LIMITER, TR_I18N("GEN_FPS_LIMITER"));
 
         // Set up the graphics settings submenu
         wxMenu *graphicsMenu = new wxMenu();
-        graphicsMenu->AppendSubMenu(frameskip, "&Skip Frames");
-        graphicsMenu->AppendCheckItem(THREADED_2D, "&Threaded 2D");
-        graphicsMenu->AppendSubMenu(threaded3D, "&Threaded 3D");
-        graphicsMenu->AppendCheckItem(HIGH_RES_3D, "&High-Resolution 3D");
-        graphicsMenu->AppendCheckItem(SCREEN_GHOST, "Simulate Ghosting");
+        graphicsMenu->AppendSubMenu(frameskip, TR_I18N("GFX_SKIP_FRAMES"));
+        graphicsMenu->AppendCheckItem(THREADED_2D, TR_I18N("GFX_THREADED_2D"));
+        graphicsMenu->AppendSubMenu(threaded3D, TR_I18N("GFX_THREADED_3D"));
+        graphicsMenu->AppendCheckItem(HIGH_RES_3D, TR_I18N("GFX_HIGH_RES_3D"));
+        graphicsMenu->AppendCheckItem(SCREEN_GHOST, TR_I18N("GFX_SCREEN_GHOST"));
 
         // Set up the audio settings submenu
         wxMenu *audioMenu = new wxMenu();
-        audioMenu->AppendCheckItem(EMULATE_AUDIO, "&Audio Emulation");
-        audioMenu->AppendCheckItem(AUDIO_16_BIT, "&16-bit Audio Output");
-        audioMenu->AppendCheckItem(MIC_ENABLE, "&Use Microphone");
+        audioMenu->AppendCheckItem(EMULATE_AUDIO, TR_I18N("AUDIO_EMULATE"));
+        audioMenu->AppendCheckItem(AUDIO_16_BIT, TR_I18N("AUDIO_16BIT"));
+        audioMenu->AppendCheckItem(MIC_ENABLE, TR_I18N("AUDIO_MIC"));
 
         // Set up the experimental settings submenu
         wxMenu *experiMenu = new wxMenu();
-        experiMenu->AppendCheckItem(ARM7_HLE, "&High-Level ARM7");
-        experiMenu->AppendCheckItem(DSI_MODE, "&DSi Homebrew Mode");
+        experiMenu->AppendCheckItem(ARM7_HLE, TR_I18N("EXP_ARM7_HLE"));
+        experiMenu->AppendCheckItem(DSI_MODE, TR_I18N("EXP_DSI_MODE"));
+
+        // Set up the language submenu
+        wxMenu *languageMenu = new wxMenu();
+        languageMenu->AppendRadioItem(LANGUAGE_ENGLISH, TR_I18N("LANG_ENGLISH"));
+        languageMenu->AppendRadioItem(LANGUAGE_CHINESE, TR_I18N("LANG_CHINESE"));
+        // Mark the current language as selected
+        if (Settings::language == I18n::LANG_ZH)
+            languageMenu->Check(LANGUAGE_CHINESE, true);
+        else
+            languageMenu->Check(LANGUAGE_ENGLISH, true);
 
         // Set up the settings menu
         wxMenu *settingsMenu = new wxMenu();
-        settingsMenu->AppendSubMenu(generalMenu, "&General Settings");
-        settingsMenu->AppendSubMenu(graphicsMenu, "&Graphics Settings");
-        settingsMenu->AppendSubMenu(audioMenu, "&Audio Settings");
-        settingsMenu->AppendSubMenu(experiMenu, "&Experimental Settings");
+        settingsMenu->AppendSubMenu(generalMenu, TR_I18N("SETTINGS_GENERAL"));
+        settingsMenu->AppendSubMenu(graphicsMenu, TR_I18N("SETTINGS_GRAPHICS"));
+        settingsMenu->AppendSubMenu(audioMenu, TR_I18N("SETTINGS_AUDIO"));
+        settingsMenu->AppendSubMenu(experiMenu, TR_I18N("SETTINGS_EXPERIMENTAL"));
         settingsMenu->AppendSeparator();
-        settingsMenu->Append(PATH_SETTINGS, "&Path Settings");
-        settingsMenu->Append(SCREEN_LAYOUT, "&Screen Layout");
-        settingsMenu->Append(INPUT_BINDINGS, "&Input Bindings");
+        settingsMenu->Append(PATH_SETTINGS, TR_I18N("SETTINGS_PATH"));
+        settingsMenu->Append(SCREEN_LAYOUT, TR_I18N("SETTINGS_LAYOUT"));
+        settingsMenu->Append(INPUT_BINDINGS, TR_I18N("SETTINGS_INPUT"));
+        settingsMenu->AppendSubMenu(languageMenu, TR_I18N("SETTINGS_LANGUAGE"));
 
         // Set the initial settings checkbox states
         settingsMenu->Check(DIRECT_BOOT, Settings::directBoot);
@@ -223,10 +240,10 @@ NooFrame::NooFrame(NooApp *app, int id, std::string path, NooFrame *partner):
 
         // Set up the menu bar
         wxMenuBar *menuBar = new wxMenuBar();
-        menuBar->Append(fileMenu, "&File");
-        menuBar->Append(systemMenu, "&System");
+        menuBar->Append(fileMenu, TR_I18N("MENU_FILE"));
+        menuBar->Append(systemMenu, TR_I18N("MENU_SYSTEM"));
         if (id == 0) // Only show settings in the main instance
-            menuBar->Append(settingsMenu, "&Settings");
+            menuBar->Append(settingsMenu, TR_I18N("MENU_SETTINGS"));
         SetMenuBar(menuBar);
     }
 
@@ -331,18 +348,18 @@ void NooFrame::startCore(bool full) {
             // Inform the user of the error if loading wasn't successful
             switch (e) {
             case ERROR_BIOS: // Missing BIOS files
-                wxMessageDialog(this, "Make sure the path settings point to valid BIOS files and try again.",
-                    "Error Loading BIOS", wxICON_NONE).ShowModal();
+                wxMessageDialog(this, TR_I18N("ERR_BIOS_MSG"),
+                    TR_I18N("ERR_BIOS_TITLE"), wxICON_NONE).ShowModal();
                 return;
 
             case ERROR_FIRM: // Non-bootable firmware file
-                wxMessageDialog(this, "Make sure the path settings point to a bootable firmware file or try another boot method.",
-                    "Error Loading Firmware", wxICON_NONE).ShowModal();
+                wxMessageDialog(this, TR_I18N("ERR_FIRM_MSG"),
+                    TR_I18N("ERR_FIRM_TITLE"), wxICON_NONE).ShowModal();
                 return;
 
             case ERROR_ROM: // Unreadable ROM file
-                wxMessageDialog(this, "Make sure the ROM file is accessible and try again.",
-                    "Error Loading ROM", wxICON_NONE).ShowModal();
+                wxMessageDialog(this, TR_I18N("ERR_ROM_MSG"),
+                    TR_I18N("ERR_ROM_TITLE"), wxICON_NONE).ShowModal();
                 return;
             }
         }
@@ -358,7 +375,7 @@ void NooFrame::startCore(bool full) {
         }
 
         // Update the system menu for running
-        systemMenu->SetLabel(PAUSE, "&Pause");
+        systemMenu->SetLabel(PAUSE, TR_I18N("SYSTEM_PAUSE"));
         systemMenu->Enable(PAUSE, true);
         systemMenu->Enable(RESTART, true);
         systemMenu->Enable(STOP, true);
@@ -395,7 +412,7 @@ void NooFrame::stopCore(bool full) {
     }
 
     // Update the system menu for being paused
-    systemMenu->SetLabel(PAUSE, "&Resume");
+    systemMenu->SetLabel(PAUSE, TR_I18N("SYSTEM_RESUME"));
 
     if (full) {
         // Disable some menu items
@@ -508,14 +525,14 @@ void NooFrame::loadRomPath(std::string path) {
     // If a ROM of the other type is already loaded, ask if it should be loaded alongside the new ROM
     if (path.find(".nds", path.length() - 4) != std::string::npos) { // NDS ROM
         if (gbaPath != "") {
-            wxMessageDialog dialog(this, "Load the current GBA ROM alongside this ROM?", "Loading NDS ROM", wxYES_NO | wxICON_NONE);
+            wxMessageDialog dialog(this, TR_I18N("ROM_LOADING_NDS_MSG"), TR_I18N("ROM_LOADING_NDS_TITLE"), wxYES_NO | wxICON_NONE);
             if (dialog.ShowModal() != wxID_YES) gbaPath = "";
         }
         ndsPath = path;
     }
     else if (path.find(".gba", path.length() - 4) != std::string::npos) { // GBA ROM
         if (ndsPath != "") {
-            wxMessageDialog dialog(this, "Load the current NDS ROM alongside this ROM?", "Loading GBA ROM", wxYES_NO | wxICON_NONE);
+            wxMessageDialog dialog(this, TR_I18N("ROM_LOADING_GBA_MSG"), TR_I18N("ROM_LOADING_GBA_TITLE"), wxYES_NO | wxICON_NONE);
             if (dialog.ShowModal() != wxID_YES) ndsPath = "";
         }
         gbaPath = path;
@@ -530,7 +547,7 @@ void NooFrame::loadRomPath(std::string path) {
 
 void NooFrame::loadRom(wxCommandEvent &event) {
     // Show the file browser
-    wxFileDialog romSelect(this, "Select ROM File", "", "", "NDS/GBA ROM files (*.nds, *.gba)|*.nds;*.gba", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    wxFileDialog romSelect(this, TR_I18N("ROM_SELECT_FILE"), "", "", TR_I18N("ROM_FILTER"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if (romSelect.ShowModal() != wxID_CANCEL)
         loadRomPath((const char*)romSelect.GetPath().mb_str(wxConvUTF8));
 }
@@ -546,7 +563,7 @@ void NooFrame::trimRom(wxCommandEvent &event) {
     bool gba = core->gbaMode;
 
     // Confirm that the current ROM should be trimmed
-    wxMessageDialog dialog(this, "Trim the current ROM to save space?", "Trimming ROM", wxYES_NO | wxICON_NONE);
+    wxMessageDialog dialog(this, TR_I18N("ROM_TRIM_MSG"), TR_I18N("ROM_TRIM_TITLE"), wxYES_NO | wxICON_NONE);
     if (dialog.ShowModal() == wxID_YES) {
         int oldSize, newSize;
 
@@ -561,10 +578,10 @@ void NooFrame::trimRom(wxCommandEvent &event) {
         // Show the results
         wxString str;
         if (oldSize != newSize)
-            str.Printf("ROM trimmed from %.2fMB to %.2fMB!", (float)oldSize / 1024 / 1024, (float)newSize / 1024 / 1024);
+            str.Printf(TR_I18N("ROM_TRIM_RESULT"), (float)oldSize / 1024 / 1024, (float)newSize / 1024 / 1024);
         else
-            str.Printf("This ROM is already trimmed!");
-        wxMessageDialog(this, str, "ROM Trimmed", wxICON_NONE).ShowModal();
+            str = TR_I18N("ROM_TRIM_NOCHANGE");
+        wxMessageDialog(this, str, TR_I18N("ROM_TRIMMED"), wxICON_NONE).ShowModal();
     }
 }
 
@@ -579,15 +596,13 @@ void NooFrame::saveState(wxCommandEvent &event) {
     wxMessageDialog *dialog;
     switch (core->saveStates.checkState()) {
     case STATE_FILE_FAIL:
-        dialog = new wxMessageDialog(this, "Saving and loading states is dangerous and can lead to data "
-            "loss. States are also not guaranteed to be compatible across emulator versions. Please "
-            "rely on in-game saving to keep your progress, and back up .sav files before using this "
-            "feature. Do you want to save the current state?", "Save State", wxYES_NO | wxICON_NONE);
+        dialog = new wxMessageDialog(this, TR_I18N("STATE_SAVE_NEW"),
+            TR_I18N("STATE_SAVE_TITLE"), wxYES_NO | wxICON_NONE);
         break;
 
     default:
-        dialog = new wxMessageDialog(this, "Do you want to overwrite the saved state with the "
-            "current state? This can't be undone!", "Save State", wxYES_NO | wxICON_NONE);
+        dialog = new wxMessageDialog(this, TR_I18N("STATE_SAVE_OVERWRITE"),
+            TR_I18N("STATE_SAVE_TITLE"), wxYES_NO | wxICON_NONE);
         break;
     }
 
@@ -605,23 +620,23 @@ void NooFrame::loadState(wxCommandEvent &event) {
     wxMessageDialog *dialog;
     switch (core->saveStates.checkState()) {
     case STATE_SUCCESS:
-        dialog = new wxMessageDialog(this, "Do you want to load the saved state and lose the "
-            "current state? This can't be undone!", "Load State", wxYES_NO | wxICON_NONE);
+        dialog = new wxMessageDialog(this, TR_I18N("STATE_LOAD_CONFIRM"),
+            TR_I18N("STATE_LOAD_TITLE"), wxYES_NO | wxICON_NONE);
         break;
 
     case STATE_FILE_FAIL:
-        dialog = new wxMessageDialog(this, "The state file doesn't "
-            "exist or couldn't be opened.", "Error", wxICON_NONE);
+        dialog = new wxMessageDialog(this, TR_I18N("STATE_LOAD_FILE_FAIL"),
+            TR_I18N("STATE_LOAD_FILE_FAIL_TITLE"), wxICON_NONE);
         break;
 
     case STATE_FORMAT_FAIL:
-        dialog = new wxMessageDialog(this, "The state file "
-            "doesn't have a valid format.", "Error", wxICON_NONE);
+        dialog = new wxMessageDialog(this, TR_I18N("STATE_LOAD_FORMAT_FAIL"),
+            TR_I18N("STATE_LOAD_FILE_FAIL_TITLE"), wxICON_NONE);
         break;
 
     case STATE_VERSION_FAIL:
-        dialog = new wxMessageDialog(this, "The state file isn't "
-            "compatible with this version of NooDS.", "Error", wxICON_NONE);
+        dialog = new wxMessageDialog(this, TR_I18N("STATE_LOAD_VERSION_FAIL"),
+            TR_I18N("STATE_LOAD_FILE_FAIL_TITLE"), wxICON_NONE);
         break;
     }
 
@@ -767,6 +782,16 @@ void NooFrame::inputSettings(wxCommandEvent &event) {
     if (timer) timer->Start(10);
 }
 
+void NooFrame::languageEnglish(wxCommandEvent &event) {
+    // Switch the interface language to English
+    applyLanguageChange(I18n::LANG_EN, true);
+}
+
+void NooFrame::languageChinese(wxCommandEvent &event) {
+    // Switch the interface language to Chinese
+    applyLanguageChange(I18n::LANG_ZH, true);
+}
+
 void NooFrame::updateJoystick(wxTimerEvent &event) {
     // Check the status of mapped joystick inputs and trigger key presses and releases accordingly
     for (int i = 0; i < MAX_KEYS; i++) {
@@ -806,4 +831,34 @@ void NooFrame::close(wxCloseEvent &event) {
     canvas->finish();
     if (partner) delete partner;
     event.Skip(true);
+}
+
+void NooFrame::applyLanguageChange(int newLang, bool interactive) {
+    // Apply a new language selection. Because all visible menu/dialog strings
+    // are translated once at startup, the change is persisted to the settings
+    // file and the user is prompted to restart so the new strings are loaded.
+    if (newLang == Settings::language)
+        return;
+
+    Settings::language = newLang;
+    Settings::save();
+
+    if (!interactive)
+        return;
+
+    wxMessageDialog dialog(this, TR_I18N("LANG_RESTART_MSG"),
+        TR_I18N("LANG_RESTART_TITLE"), wxYES_NO | wxICON_NONE);
+    if (dialog.ShowModal() == wxID_YES) {
+        // Relaunch the current executable with the original command-line
+        // arguments (e.g. ROM path) and then close the running process so the
+        // new language takes effect.
+        wxString exe = wxStandardPaths::Get().GetExecutablePath();
+        if (!exe.IsEmpty()) {
+            wxString cmd = wxString::Format("\"%s\"", exe);
+            for (int i = 1; i < wxGetApp().argc; i++)
+                cmd += wxString::Format(" \"%s\"", wxGetApp().argv[i]);
+            wxExecute(cmd);
+        }
+        Close(true);
+    }
 }

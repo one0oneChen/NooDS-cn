@@ -94,6 +94,9 @@ private:
     void pathSettings(wxCommandEvent &event);
     void layoutSettings(wxCommandEvent &event);
     void inputSettings(wxCommandEvent &event);
+    void languageEnglish(wxCommandEvent &event);
+    void languageChinese(wxCommandEvent &event);
+    void applyLanguageChange(int newLang, bool interactive);
     void updateJoystick(wxTimerEvent &event);
     void dropFiles(wxDropFilesEvent &event);
     void close(wxCloseEvent &event);

@@ -18,6 +18,7 @@
 */
 
 #include "cheat_dialog.h"
+#include "../i18n/i18n.h"
 
 enum CheatEvent {
     ADD_CHEAT = 1,
@@ -33,7 +34,7 @@ EVT_BUTTON(wxID_CANCEL, CheatDialog::cancel)
 EVT_BUTTON(wxID_OK, CheatDialog::confirm)
 wxEND_EVENT_TABLE()
 
-CheatDialog::CheatDialog(Core *core): wxDialog(nullptr, wxID_ANY, "Action Replay Cheats"), core(core) {
+CheatDialog::CheatDialog(Core *core): wxDialog(nullptr, wxID_ANY, TR_I18N("CHEAT_TITLE")), core(core) {
     // Use the height of a button as a unit to scale pixel values based on DPI/font
     wxButton *dummy = new wxButton(this, wxID_ANY, "");
     int size = dummy->GetSize().y;
@@ -64,11 +65,11 @@ CheatDialog::CheatDialog(Core *core): wxDialog(nullptr, wxID_ANY, "Action Replay
 
     // Set up the add, remove, cancel, and confirm buttons
     wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-    buttonSizer->Add(new wxButton(this, ADD_CHEAT, "Add"), 0, wxRIGHT, size / 16);
-    buttonSizer->Add(new wxButton(this, REMOVE_CHEAT, "Remove"), 0, wxLEFT, size / 16);
+    buttonSizer->Add(new wxButton(this, ADD_CHEAT, TR_I18N("CHEAT_ADD")), 0, wxRIGHT, size / 16);
+    buttonSizer->Add(new wxButton(this, REMOVE_CHEAT, TR_I18N("CHEAT_REMOVE")), 0, wxLEFT, size / 16);
     buttonSizer->Add(new wxStaticText(this, wxID_ANY, ""), 1);
-    buttonSizer->Add(new wxButton(this, wxID_CANCEL, "Cancel"), 0, wxRIGHT, size / 16);
-    buttonSizer->Add(new wxButton(this, wxID_OK, "Confirm"), 0, wxLEFT, size / 16);
+    buttonSizer->Add(new wxButton(this, wxID_CANCEL, TR_I18N("CHEAT_CANCEL")), 0, wxRIGHT, size / 16);
+    buttonSizer->Add(new wxButton(this, wxID_OK, TR_I18N("CHEAT_CONFIRM")), 0, wxLEFT, size / 16);
 
     // Combine all of the contents
     wxBoxSizer *contents = new wxBoxSizer(wxVERTICAL);
@@ -134,7 +135,7 @@ void CheatDialog::selectCheat(wxCommandEvent &event) {
 void CheatDialog::addCheat(wxCommandEvent &event) {
     // Create a new cheat
     ARCheat cheat;
-    cheatList->Append(cheat.name = "New Cheat");
+    cheatList->Append(cheat.name = TR_I18N("CHEAT_NEW"));
     cheat.enabled = false;
     core->actionReplay.cheats.push_back(cheat);
 }

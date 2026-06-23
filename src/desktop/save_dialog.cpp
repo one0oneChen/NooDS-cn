@@ -19,6 +19,7 @@
 
 #include "save_dialog.h"
 #include "noo_frame.h"
+#include "../i18n/i18n.h"
 
 enum SaveEvent {
     SELECTION_0 = 1,
@@ -77,7 +78,7 @@ int SaveDialog::sizeToSelection(int size) {
     }
 }
 
-SaveDialog::SaveDialog(NooFrame *frame): wxDialog(nullptr, wxID_ANY, "Change Save Type"), frame(frame) {
+SaveDialog::SaveDialog(NooFrame *frame): wxDialog(nullptr, wxID_ANY, TR_I18N("SAVE_TITLE")), frame(frame) {
     // Check the current emulation mode and get the corresponding cartridge
     gba = frame->core->gbaMode;
     cartridge = gba ? (Cartridge*)&frame->core->cartridgeGba : (Cartridge*)&frame->core->cartridgeNds;
@@ -94,25 +95,25 @@ SaveDialog::SaveDialog(NooFrame *frame): wxDialog(nullptr, wxID_ANY, "Change Sav
 
     if (gba) {
         // Set up radio buttons for GBA save types
-        leftRadio->Add(buttons[0] = new wxRadioButton(this, SELECTION_0, "None"), 1);
-        leftRadio->Add(buttons[1] = new wxRadioButton(this, SELECTION_1, "EEPROM 0.5KB"), 1);
-        leftRadio->Add(buttons[2] = new wxRadioButton(this, SELECTION_2, "EEPROM 8KB"), 1);
-        rightRadio->Add(buttons[3] = new wxRadioButton(this, SELECTION_3, "SRAM 32KB"), 1);
-        rightRadio->Add(buttons[4] = new wxRadioButton(this, SELECTION_4, "FLASH 64KB"), 1);
-        rightRadio->Add(buttons[5] = new wxRadioButton(this, SELECTION_5, "FLASH 128KB"), 1);
+        leftRadio->Add(buttons[0] = new wxRadioButton(this, SELECTION_0, TR_I18N("SAVE_NONE")), 1);
+        leftRadio->Add(buttons[1] = new wxRadioButton(this, SELECTION_1, TR_I18N("SAVE_EEPROM_512B")), 1);
+        leftRadio->Add(buttons[2] = new wxRadioButton(this, SELECTION_2, TR_I18N("SAVE_EEPROM_8KB")), 1);
+        rightRadio->Add(buttons[3] = new wxRadioButton(this, SELECTION_3, TR_I18N("SAVE_SRAM_32KB")), 1);
+        rightRadio->Add(buttons[4] = new wxRadioButton(this, SELECTION_4, TR_I18N("SAVE_FLASH_64KB")), 1);
+        rightRadio->Add(buttons[5] = new wxRadioButton(this, SELECTION_5, TR_I18N("SAVE_FLASH_128KB")), 1);
     }
     else {
         // Set up radio buttons for NDS save types
-        leftRadio->Add(buttons[0] = new wxRadioButton(this, SELECTION_0, "None"), 1);
-        leftRadio->Add(buttons[1] = new wxRadioButton(this, SELECTION_1, "EEPROM 0.5KB"), 1);
-        leftRadio->Add(buttons[2] = new wxRadioButton(this, SELECTION_2, "EEPROM 8KB"), 1);
-        leftRadio->Add(buttons[4] = new wxRadioButton(this, SELECTION_4, "EEPROM 64KB"), 1);
-        leftRadio->Add(buttons[5] = new wxRadioButton(this, SELECTION_5, "EEPROM 128KB"), 1);
-        rightRadio->Add(buttons[3] = new wxRadioButton(this, SELECTION_3, "FRAM 32KB"), 1);
-        rightRadio->Add(buttons[6] = new wxRadioButton(this, SELECTION_6, "FLASH 256KB"), 1);
-        rightRadio->Add(buttons[7] = new wxRadioButton(this, SELECTION_7, "FLASH 512KB"), 1);
-        rightRadio->Add(buttons[8] = new wxRadioButton(this, SELECTION_8, "FLASH 1024KB"), 1);
-        rightRadio->Add(buttons[9] = new wxRadioButton(this, SELECTION_9, "FLASH 8192KB"), 1);
+        leftRadio->Add(buttons[0] = new wxRadioButton(this, SELECTION_0, TR_I18N("SAVE_NONE")), 1);
+        leftRadio->Add(buttons[1] = new wxRadioButton(this, SELECTION_1, TR_I18N("SAVE_EEPROM_512B")), 1);
+        leftRadio->Add(buttons[2] = new wxRadioButton(this, SELECTION_2, TR_I18N("SAVE_EEPROM_8KB")), 1);
+        leftRadio->Add(buttons[4] = new wxRadioButton(this, SELECTION_4, TR_I18N("SAVE_EEPROM_64KB")), 1);
+        leftRadio->Add(buttons[5] = new wxRadioButton(this, SELECTION_5, TR_I18N("SAVE_EEPROM_128KB")), 1);
+        rightRadio->Add(buttons[3] = new wxRadioButton(this, SELECTION_3, TR_I18N("SAVE_FRAM_32KB")), 1);
+        rightRadio->Add(buttons[6] = new wxRadioButton(this, SELECTION_6, TR_I18N("SAVE_FLASH_256KB")), 1);
+        rightRadio->Add(buttons[7] = new wxRadioButton(this, SELECTION_7, TR_I18N("SAVE_FLASH_512KB")), 1);
+        rightRadio->Add(buttons[8] = new wxRadioButton(this, SELECTION_8, TR_I18N("SAVE_FLASH_1024KB")), 1);
+        rightRadio->Add(buttons[9] = new wxRadioButton(this, SELECTION_9, TR_I18N("SAVE_FLASH_8192KB")), 1);
     }
 
     // Select the current save type by default
@@ -127,8 +128,8 @@ SaveDialog::SaveDialog(NooFrame *frame): wxDialog(nullptr, wxID_ANY, "Change Sav
     // Set up the cancel and confirm buttons
     wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
     buttonSizer->Add(new wxStaticText(this, wxID_ANY, ""), 1);
-    buttonSizer->Add(new wxButton(this, wxID_CANCEL, "Cancel"), 0, wxRIGHT, size / 16);
-    buttonSizer->Add(new wxButton(this, wxID_OK, "Confirm"), 0, wxLEFT, size / 16);
+    buttonSizer->Add(new wxButton(this, wxID_CANCEL, TR_I18N("SAVE_CANCEL")), 0, wxRIGHT, size / 16);
+    buttonSizer->Add(new wxButton(this, wxID_OK, TR_I18N("SAVE_CONFIRM")), 0, wxLEFT, size / 16);
 
     // Combine all of the contents
     wxBoxSizer *contents = new wxBoxSizer(wxVERTICAL);
@@ -199,7 +200,7 @@ void SaveDialog::selection9(wxCommandEvent &event) {
 void SaveDialog::confirm(wxCommandEvent &event) {
     // Confirm the change because accidentally resizing a working save file could be bad!
     // On confirmation, apply the change and restart the core
-    wxMessageDialog dialog(this, "Are you sure? This may result in data loss!", "Changing Save Type", wxYES_NO | wxICON_NONE);
+    wxMessageDialog dialog(this, TR_I18N("SAVE_CHANGE_WARNING"), TR_I18N("SAVE_CHANGE_TITLE"), wxYES_NO | wxICON_NONE);
     if (dialog.ShowModal() == wxID_YES) {
         frame->stopCore(false);
         cartridge->resizeSave(selectionToSize(selection));

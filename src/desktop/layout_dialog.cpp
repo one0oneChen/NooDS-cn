@@ -20,6 +20,7 @@
 #include "layout_dialog.h"
 #include "noo_app.h"
 #include "../common/screen_layout.h"
+#include "../i18n/i18n.h"
 #include "../settings.h"
 
 enum LayoutEvent {
@@ -88,7 +89,7 @@ EVT_BUTTON(wxID_CANCEL, LayoutDialog::cancel)
 EVT_BUTTON(wxID_OK, LayoutDialog::confirm)
 wxEND_EVENT_TABLE()
 
-LayoutDialog::LayoutDialog(NooApp *app): wxDialog(nullptr, wxID_ANY, "Screen Layout"), app(app) {
+LayoutDialog::LayoutDialog(NooApp *app): wxDialog(nullptr, wxID_ANY, TR_I18N("LAYOUT_TITLE")), app(app) {
     // Remember the previous settings in case the changes are discarded
     prevSettings[0] = ScreenLayout::screenPosition;
     prevSettings[1] = ScreenLayout::screenRotation;
@@ -110,84 +111,84 @@ LayoutDialog::LayoutDialog(NooApp *app): wxDialog(nullptr, wxID_ANY, "Screen Lay
     // Set up the position settings
     wxRadioButton *posBtns[5];
     wxBoxSizer *posSizer = new wxBoxSizer(wxHORIZONTAL);
-    posSizer->Add(new wxStaticText(this, wxID_ANY, "Position:", wxDefaultPosition,
+    posSizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("LAYOUT_POSITION"), wxDefaultPosition,
         wxSize(wxDefaultSize.GetWidth(), size)), 0, wxALIGN_CENTRE | wxRIGHT, size / 8);
-    posSizer->Add(posBtns[0] = new wxRadioButton(this, POS_CENTER, "Center",
+    posSizer->Add(posBtns[0] = new wxRadioButton(this, POS_CENTER, TR_I18N("LAYOUT_POSITION_CENTER"),
         wxDefaultPosition, wxDefaultSize, wxRB_GROUP), 0, wxLEFT, size / 8);
-    posSizer->Add(posBtns[1] = new wxRadioButton(this, POS_TOP, "Top"), 0, wxLEFT, size / 8);
-    posSizer->Add(posBtns[2] = new wxRadioButton(this, POS_BOTTOM, "Bottom"), 0, wxLEFT, size / 8);
-    posSizer->Add(posBtns[3] = new wxRadioButton(this, POS_LEFT, "Left"), 0, wxLEFT, size / 8);
-    posSizer->Add(posBtns[4] = new wxRadioButton(this, POS_RIGHT, "Right"), 0, wxLEFT, size / 8);
+    posSizer->Add(posBtns[1] = new wxRadioButton(this, POS_TOP, TR_I18N("LAYOUT_POSITION_TOP")), 0, wxLEFT, size / 8);
+    posSizer->Add(posBtns[2] = new wxRadioButton(this, POS_BOTTOM, TR_I18N("LAYOUT_POSITION_BOTTOM")), 0, wxLEFT, size / 8);
+    posSizer->Add(posBtns[3] = new wxRadioButton(this, POS_LEFT, TR_I18N("LAYOUT_POSITION_LEFT")), 0, wxLEFT, size / 8);
+    posSizer->Add(posBtns[4] = new wxRadioButton(this, POS_RIGHT, TR_I18N("LAYOUT_POSITION_RIGHT")), 0, wxLEFT, size / 8);
 
     // Set up the rotation settings
     wxRadioButton *rotateBtns[3];
     wxBoxSizer *rotateSizer = new wxBoxSizer(wxHORIZONTAL);
-    rotateSizer->Add(new wxStaticText(this, wxID_ANY, "Rotation:", wxDefaultPosition,
+    rotateSizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("LAYOUT_ROTATION"), wxDefaultPosition,
         wxSize(wxDefaultSize.GetWidth(), size)), 0, wxALIGN_CENTRE | wxRIGHT, size / 8);
-    rotateSizer->Add(rotateBtns[0] = new wxRadioButton(this, ROTATE_NONE, "None",
+    rotateSizer->Add(rotateBtns[0] = new wxRadioButton(this, ROTATE_NONE, TR_I18N("LAYOUT_ROTATION_NONE"),
         wxDefaultPosition, wxDefaultSize, wxRB_GROUP), 0, wxLEFT, size / 8);
-    rotateSizer->Add(rotateBtns[1] = new wxRadioButton(this, ROTATE_CW, "Clockwise"), 0, wxLEFT, size / 8);
-    rotateSizer->Add(rotateBtns[2] = new wxRadioButton(this, ROTATE_CCW, "Counter-Clockwise"), 0, wxLEFT, size / 8);
+    rotateSizer->Add(rotateBtns[1] = new wxRadioButton(this, ROTATE_CW, TR_I18N("LAYOUT_ROTATION_CW")), 0, wxLEFT, size / 8);
+    rotateSizer->Add(rotateBtns[2] = new wxRadioButton(this, ROTATE_CCW, TR_I18N("LAYOUT_ROTATION_CCW")), 0, wxLEFT, size / 8);
 
     // Set up the arrangement settings
     wxRadioButton *arrangeBtns[4];
     wxBoxSizer *arrangeSizer = new wxBoxSizer(wxHORIZONTAL);
-    arrangeSizer->Add(new wxStaticText(this, wxID_ANY, "Arrangement:", wxDefaultPosition,
+    arrangeSizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("LAYOUT_ARRANGEMENT"), wxDefaultPosition,
         wxSize(wxDefaultSize.GetWidth(), size)), 0, wxALIGN_CENTRE | wxRIGHT, size / 8);
-    arrangeSizer->Add(arrangeBtns[0] = new wxRadioButton(this, ARRANGE_AUTO, "Automatic",
+    arrangeSizer->Add(arrangeBtns[0] = new wxRadioButton(this, ARRANGE_AUTO, TR_I18N("LAYOUT_ARRANGEMENT_AUTO"),
         wxDefaultPosition, wxDefaultSize, wxRB_GROUP), 0, wxLEFT, size / 8);
-    arrangeSizer->Add(arrangeBtns[1] = new wxRadioButton(this, ARRANGE_VERT, "Vertical"), 0, wxLEFT, size / 8);
-    arrangeSizer->Add(arrangeBtns[2] = new wxRadioButton(this, ARRANGE_HORI, "Horizontal"), 0, wxLEFT, size / 8);
-    arrangeSizer->Add(arrangeBtns[3] = new wxRadioButton(this, ARRANGE_SING, "Single Screen"), 0, wxLEFT, size / 8);
+    arrangeSizer->Add(arrangeBtns[1] = new wxRadioButton(this, ARRANGE_VERT, TR_I18N("LAYOUT_ARRANGEMENT_VERT")), 0, wxLEFT, size / 8);
+    arrangeSizer->Add(arrangeBtns[2] = new wxRadioButton(this, ARRANGE_HORI, TR_I18N("LAYOUT_ARRANGEMENT_HORI")), 0, wxLEFT, size / 8);
+    arrangeSizer->Add(arrangeBtns[3] = new wxRadioButton(this, ARRANGE_SING, TR_I18N("LAYOUT_ARRANGEMENT_SING")), 0, wxLEFT, size / 8);
 
     // Set up the sizing settings
     wxRadioButton *sizeBtns[3];
     wxBoxSizer *sizeSizer = new wxBoxSizer(wxHORIZONTAL);
-    sizeSizer->Add(new wxStaticText(this, wxID_ANY, "Sizing:", wxDefaultPosition,
+    sizeSizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("LAYOUT_SIZING"), wxDefaultPosition,
         wxSize(wxDefaultSize.GetWidth(), size)), 0, wxALIGN_CENTRE | wxRIGHT, size / 8);
-    sizeSizer->Add(sizeBtns[0] = new wxRadioButton(this, SIZE_EVEN, "Even",
+    sizeSizer->Add(sizeBtns[0] = new wxRadioButton(this, SIZE_EVEN, TR_I18N("LAYOUT_SIZING_EVEN"),
         wxDefaultPosition, wxDefaultSize, wxRB_GROUP), 0, wxLEFT, size / 8);
-    sizeSizer->Add(sizeBtns[1] = new wxRadioButton(this, SIZE_TOP, "Enlarge Top"), 0, wxLEFT, size / 8);
-    sizeSizer->Add(sizeBtns[2] = new wxRadioButton(this, SIZE_BOT, "Enlarge Bottom"), 0, wxLEFT, size / 8);
+    sizeSizer->Add(sizeBtns[1] = new wxRadioButton(this, SIZE_TOP, TR_I18N("LAYOUT_SIZING_TOP")), 0, wxLEFT, size / 8);
+    sizeSizer->Add(sizeBtns[2] = new wxRadioButton(this, SIZE_BOT, TR_I18N("LAYOUT_SIZING_BOT")), 0, wxLEFT, size / 8);
 
     // Set up the gap settings
     wxRadioButton *gapBtns[4];
     wxBoxSizer *gapSizer = new wxBoxSizer(wxHORIZONTAL);
-    gapSizer->Add(new wxStaticText(this, wxID_ANY, "Gap:", wxDefaultPosition,
+    gapSizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("LAYOUT_GAP"), wxDefaultPosition,
         wxSize(wxDefaultSize.GetWidth(), size)), 0, wxALIGN_CENTRE | wxRIGHT, size / 8);
-    gapSizer->Add(gapBtns[0] = new wxRadioButton(this, GAP_NONE, "None",
+    gapSizer->Add(gapBtns[0] = new wxRadioButton(this, GAP_NONE, TR_I18N("LAYOUT_GAP_NONE"),
         wxDefaultPosition, wxDefaultSize, wxRB_GROUP), 0, wxLEFT, size / 8);
-    gapSizer->Add(gapBtns[1] = new wxRadioButton(this, GAP_QUART, "Quarter"), 0, wxLEFT, size / 8);
-    gapSizer->Add(gapBtns[2] = new wxRadioButton(this, GAP_HALF, "Half"), 0, wxLEFT, size / 8);
-    gapSizer->Add(gapBtns[3] = new wxRadioButton(this, GAP_FULL, "Full"), 0, wxLEFT, size / 8);
+    gapSizer->Add(gapBtns[1] = new wxRadioButton(this, GAP_QUART, TR_I18N("LAYOUT_GAP_QUART")), 0, wxLEFT, size / 8);
+    gapSizer->Add(gapBtns[2] = new wxRadioButton(this, GAP_HALF, TR_I18N("LAYOUT_GAP_HALF")), 0, wxLEFT, size / 8);
+    gapSizer->Add(gapBtns[3] = new wxRadioButton(this, GAP_FULL, TR_I18N("LAYOUT_GAP_FULL")), 0, wxLEFT, size / 8);
 
     // Set up the filter settings
     wxRadioButton *filtBtns[3];
     wxBoxSizer *filtSizer = new wxBoxSizer(wxHORIZONTAL);
-    filtSizer->Add(new wxStaticText(this, wxID_ANY, "Filter:", wxDefaultPosition,
+    filtSizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("LAYOUT_FILTER"), wxDefaultPosition,
         wxSize(wxDefaultSize.GetWidth(), size)), 0, wxALIGN_CENTRE | wxRIGHT, size / 8);
-    filtSizer->Add(filtBtns[0] = new wxRadioButton(this, FILT_NEAREST, "Nearest",
+    filtSizer->Add(filtBtns[0] = new wxRadioButton(this, FILT_NEAREST, TR_I18N("LAYOUT_FILTER_NEAREST"),
         wxDefaultPosition, wxDefaultSize, wxRB_GROUP), 0, wxLEFT, size / 8);
-    filtSizer->Add(filtBtns[1] = new wxRadioButton(this, FILT_UPSCALE, "Upscaled"), 0, wxLEFT, size / 8);
-    filtSizer->Add(filtBtns[2] = new wxRadioButton(this, FILT_LINEAR, "Linear"), 0, wxLEFT, size / 8);
+    filtSizer->Add(filtBtns[1] = new wxRadioButton(this, FILT_UPSCALE, TR_I18N("LAYOUT_FILTER_UPSCALE")), 0, wxLEFT, size / 8);
+    filtSizer->Add(filtBtns[2] = new wxRadioButton(this, FILT_LINEAR, TR_I18N("LAYOUT_FILTER_LINEAR")), 0, wxLEFT, size / 8);
 
     // Set up the aspect ratio settings
     wxRadioButton *aspectBtns[4];
     wxBoxSizer *aspectSizer = new wxBoxSizer(wxHORIZONTAL);
-    aspectSizer->Add(new wxStaticText(this, wxID_ANY, "Aspect Ratio:", wxDefaultPosition,
+    aspectSizer->Add(new wxStaticText(this, wxID_ANY, TR_I18N("LAYOUT_ASPECT"), wxDefaultPosition,
         wxSize(wxDefaultSize.GetWidth(), size)), 0, wxALIGN_CENTRE | wxRIGHT, size / 8);
-    aspectSizer->Add(aspectBtns[0] = new wxRadioButton(this, ASPECT_DEFAULT, "Default",
+    aspectSizer->Add(aspectBtns[0] = new wxRadioButton(this, ASPECT_DEFAULT, TR_I18N("LAYOUT_ASPECT_DEFAULT"),
         wxDefaultPosition, wxDefaultSize, wxRB_GROUP), 0, wxLEFT, size / 8);
-    aspectSizer->Add(aspectBtns[1] = new wxRadioButton(this, ASPECT_16_10, "16:10"), 0, wxLEFT, size / 8);
-    aspectSizer->Add(aspectBtns[2] = new wxRadioButton(this, ASPECT_16_9, "16:9"), 0, wxLEFT, size / 8);
-    aspectSizer->Add(aspectBtns[3] = new wxRadioButton(this, ASPECT_18_9, "18:9"), 0, wxLEFT, size / 8);
+    aspectSizer->Add(aspectBtns[1] = new wxRadioButton(this, ASPECT_16_10, TR_I18N("LAYOUT_ASPECT_16_10")), 0, wxLEFT, size / 8);
+    aspectSizer->Add(aspectBtns[2] = new wxRadioButton(this, ASPECT_16_9, TR_I18N("LAYOUT_ASPECT_16_9")), 0, wxLEFT, size / 8);
+    aspectSizer->Add(aspectBtns[3] = new wxRadioButton(this, ASPECT_18_9, TR_I18N("LAYOUT_ASPECT_18_9")), 0, wxLEFT, size / 8);
 
     // Set up the checkbox settings
     wxCheckBox *boxes[3];
     wxBoxSizer *checkSizer = new wxBoxSizer(wxHORIZONTAL);
-    checkSizer->Add(boxes[0] = new wxCheckBox(this, INT_SCALE, "Integer Scale"), 0, wxLEFT, size / 8);
-    checkSizer->Add(boxes[1] = new wxCheckBox(this, GBA_CROP, "GBA Crop"), 0, wxLEFT, size / 8);
-    checkSizer->Add(boxes[2] = new wxCheckBox(this, SPLIT_SCREENS, "Split Screens"), 0, wxLEFT, size / 8);
+    checkSizer->Add(boxes[0] = new wxCheckBox(this, INT_SCALE, TR_I18N("LAYOUT_INT_SCALE")), 0, wxLEFT, size / 8);
+    checkSizer->Add(boxes[1] = new wxCheckBox(this, GBA_CROP, TR_I18N("LAYOUT_GBA_CROP")), 0, wxLEFT, size / 8);
+    checkSizer->Add(boxes[2] = new wxCheckBox(this, SPLIT_SCREENS, TR_I18N("LAYOUT_SPLIT_SCREENS")), 0, wxLEFT, size / 8);
 
     // Set the current values of the radio buttons
     if (ScreenLayout::screenPosition < 5)
@@ -213,8 +214,8 @@ LayoutDialog::LayoutDialog(NooApp *app): wxDialog(nullptr, wxID_ANY, "Screen Lay
     // Set up the cancel and confirm buttons
     wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
     buttonSizer->Add(new wxStaticText(this, wxID_ANY, ""), 1);
-    buttonSizer->Add(new wxButton(this, wxID_CANCEL, "Cancel"), 0, wxRIGHT, size / 16);
-    buttonSizer->Add(new wxButton(this, wxID_OK, "Confirm"), 0, wxLEFT, size / 16);
+    buttonSizer->Add(new wxButton(this, wxID_CANCEL, TR_I18N("LAYOUT_CANCEL")), 0, wxRIGHT, size / 16);
+    buttonSizer->Add(new wxButton(this, wxID_OK, TR_I18N("LAYOUT_CONFIRM")), 0, wxLEFT, size / 16);
 
     // Combine all of the contents
     wxBoxSizer *contents = new wxBoxSizer(wxVERTICAL);

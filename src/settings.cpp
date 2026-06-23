@@ -36,6 +36,7 @@ int Settings::cheatsFolder = 1;
 int Settings::screenFilter = 2;
 int Settings::arm7Hle = 0;
 int Settings::dsiMode = 0;
+int Settings::language = 0;
 
 std::string Settings::bios9Path = "bios9.bin";
 std::string Settings::bios7Path = "bios7.bin";
@@ -61,6 +62,7 @@ std::vector<Setting> Settings::settings = {
     Setting("screenFilter", &screenFilter, false),
     Setting("arm7Hle", &arm7Hle, false),
     Setting("dsiMode", &dsiMode, false),
+    Setting("language", &language, false),
     Setting("bios9Path", &bios9Path, true),
     Setting("bios7Path", &bios7Path, true),
     Setting("firmwarePath", &firmwarePath, true),
